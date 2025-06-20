@@ -11,81 +11,91 @@
     },
     "Auto Guess": () => {
       setInterval(() => {
-        const btn = [...document.querySelectorAll("button")].find(b => b.style.border === "3px solid rgb(0, 232, 0)");
-        if (btn) btn.click();
+        const b = [...document.querySelectorAll("button")].find(x => x.style.border === "3px solid rgb(0, 232, 0)");
+        if (b) b.click();
       }, 100);
       alert("Auto Guess actief!");
     },
     "Choice ESP": () => {
       setInterval(() => {
-        document.querySelectorAll("button").forEach(b => {
-          if (b.style.border === "3px solid rgb(0, 232, 0)") b.style.backgroundColor = "#00ff00";
+        document.querySelectorAll("button").forEach(x => {
+          if (x.style.border === "3px solid rgb(0, 232, 0)") x.style.backgroundColor = "#0f0";
         });
       }, 100);
       alert("Choice ESP actief!");
     },
     "Password ESP": () => {
-      document.querySelectorAll("span").forEach(s => {
-        if (s.innerText.length === 4) {
-          s.style.color = "red";
-          s.style.fontWeight = "bold";
+      document.querySelectorAll("span").forEach(x => {
+        if (x.innerText.length === 4) {
+          x.style.color = "red";
+          x.style.fontWeight = "bold";
         }
       });
-      alert("Password ESP geactiveerd!");
+      alert("Password ESP actief!");
     },
     "Set Crypto": () => {
-      const amount = prompt("Hoeveel crypto?");
+      const amt = prompt("Hoeveel crypto instellen?");
       try {
-        const state = Object.values(document.querySelector("#app")._reactRootContainer._internalRoot.current.child.memoizedState)[1].stateNode;
-        state.setState({ crypto: parseInt(amount) });
-        alert("Crypto ingesteld!");
+        const nodes = Object.values(document.querySelector("#app")._reactRootContainer._internalRoot.current.child.memoizedState);
+        const st = nodes.find(x => x.stateNode && x.stateNode.setState).stateNode;
+        st.setState({ crypto: parseInt(amt) });
+        alert("Crypto ingesteld: " + amt);
       } catch {
         alert("Fout bij instellen van crypto.");
       }
     },
+    "Set Password": () => {
+      const pwd = prompt("Nieuw wachtwoord?");
+      document.querySelectorAll("span").forEach(x => {
+        if (x.innerText.length === 4) x.innerText = pwd;
+      });
+      alert("Wachtwoord visueel aangepast.");
+    },
     "Steal Players Crypto": () => {
       try {
-        const state = Object.values(document.querySelector("#app")._reactRootContainer._internalRoot.current.child.memoizedState)[1].stateNode;
-        state.setState({ crypto: 9999 });
+        const nodes = Object.values(document.querySelector("#app")._reactRootContainer._internalRoot.current.child.memoizedState);
+        const st = nodes.find(x => x.stateNode && x.stateNode.setState).stateNode;
+        st.setState({ crypto: 9999 });
         alert("Crypto gestolen (visueel)!");
       } catch {
-        alert("Fout bij aanpassen van crypto.");
+        alert("Fout bij stelen van crypto.");
       }
+    },
+    "Remove Hack": () => {
+      location.reload();
     }
   };
 
-  const menu = document.createElement('div');
-  Object.assign(menu.style, {
-    position: 'fixed', top: '50%', left: '50%',
-    transform: 'translate(-50%, -50%)',
-    background: '#fff', border: '2px solid #000',
-    borderRadius: '10px', padding: '20px',
-    zIndex: 9999, boxShadow: '0 0 10px rgba(0,0,0,0.5)',
-    fontFamily: 'Arial, sans-serif'
+  // Maak het menu
+  const div = document.createElement("div");
+  Object.assign(div.style, {
+    position: "fixed", top: "50%", left: "50%",
+    transform: "translate(-50%, -50%)",
+    background: "#fff", border: "2px solid #000",
+    padding: "20px", borderRadius: "8px",
+    boxShadow: "0 0 10px rgba(0,0,0,0.5)",
+    fontFamily: "Arial, sans-serif",
+    zIndex: 9999
   });
 
-  const title = document.createElement('h3');
-  title.textContent = 'Crypto Hack Menu';
-  title.style.textAlign = 'center';
-  menu.appendChild(title);
+  const h = document.createElement("h3");
+  h.textContent = "Crypto Hack Menu";
+  h.style.textAlign = "center";
+  div.appendChild(h);
 
   Object.entries(hacks).forEach(([name, fn]) => {
-    const btn = document.createElement('button');
+    const btn = document.createElement("button");
     btn.textContent = name;
     Object.assign(btn.style, {
-      display: 'block', margin: '5px auto',
-      padding: '8px 12px', width: '100%', fontSize: '14px',
-      cursor: 'pointer'
+      display: "block", width: "100%", margin: "5px 0",
+      padding: "8px", cursor: "pointer"
     });
-    btn.onclick = () => { fn(); document.body.removeChild(menu); };
-    menu.appendChild(btn);
+    btn.onclick = () => {
+      fn();
+      document.body.removeChild(div);
+    };
+    div.appendChild(btn);
   });
 
-  const close = document.createElement('button');
-  close.textContent = 'Sluiten';
-  close.style.marginTop = '10px';
-  close.onclick = () => document.body.removeChild(menu);
-  menu.appendChild(close);
-
-  document.body.appendChild(menu);
+  document.body.appendChild(div);
 })();
